@@ -1,4 +1,17 @@
+<script>
+// @ is an alias to /src
+import Navbar from './components/NavBar.vue';
+
+export default {
+  name: 'NavBar',
+  components: {
+    Navbar,
+  },
+};
+</script>
+
 <template>
+  <Navbar/>
   <router-view/>
 </template>
 
