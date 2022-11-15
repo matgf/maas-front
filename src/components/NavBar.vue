@@ -10,10 +10,10 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="#">Shift Availability</a>
+            <a class="nav-link" href="#/confirmed-shifts">Confirmed Engineers </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Confirmed Engineers</a>
+            <a class="nav-link" href="#/availability-shifts">Shift Availability</a>
           </li>
         </ul>
       </div>
