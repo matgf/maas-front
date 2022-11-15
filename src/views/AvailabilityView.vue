@@ -2,11 +2,12 @@
 
 import axios from 'axios';
 import { reactive, ref } from 'vue';
+import moment from 'moment';
 
 const services = reactive({});
 const currentService = ref(0);
 const datesShifts = reactive({});
-// const count = ref(0);
+const engineers = reactive({});
 
 axios({
   url: 'http://localhost:3001/graphql',
@@ -35,19 +36,32 @@ const selectService = (e) => {
       query: `
         query ($id: ID){
             service(id: $id){
-        id
-        name
-            orderedShifts {
-            dates
-        shifts {
-            id
-            assigned
-            date
-            serviceId
-            startTime
-            endTime
-        }
-        }
+                id
+                name
+                orderedShifts {
+                dates
+                shifts {
+                    id
+                    assigned
+                    date
+                    serviceId
+                    startTime
+                    endTime
+                  shiftEngineers {
+                        id
+                        engineerId
+                        shiftId
+                    }
+                    }
+
+
+                }
+                engineers {
+                    id
+                    firstName
+                    lastName
+                    serviceId
+                }
             }
         }
     `,
@@ -57,14 +71,20 @@ const selectService = (e) => {
     },
   }).then((result) => {
     datesShifts.value = result.data.data.service.orderedShifts;
-    console.log(datesShifts);
+    engineers.value = result.data.data.service.engineers;
     console.log(result.data.data.service.orderedShifts);
   });
 };
+
+const changeShiftEngineer = (sas) => {
+  console.log(sas);
+};
+
+const checkShiftEngineer = (engineerId, shiftEngineers) => shiftEngineers.find((es) => es.engineerId === parseInt(engineerId, 10));
 </script>
 
 <template>
-
+<!-- Dropdown -->
 <div class="btn-group">
   <button type="button" class="btn btn-success dropdown-toggle"
   data-bs-toggle="dropdown" aria-expanded="false">
@@ -81,33 +101,35 @@ const selectService = (e) => {
 </div>
 {{currentService}}
 
-<table v-for="lel in datesShifts.value" :key='lel.dates'
+<!-- Tables -->
+<table v-for="date in datesShifts.value" :key='date.dates'
   class="table table-striped table-bordered table-hover">
   <thead>
     <tr>
-      <th scope="col">{{ lel.dates}}</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
+      <th scope="col">{{ date.dates}}</th>
+
+      <th v-for="engineer in engineers.value" :key='engineer.id' :id='engineer.id' scope="col">
+        {{engineer.firstName}} {{engineer.lastName}}
+
+      </th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
+    <tr v-for="shift in date.shifts" :key='shift.id'>
+      <td scope="row">
+        {{moment(shift.startTime).format('HH:mm')}} - {{ moment(shift.endTime).format('HH:mm')}}
+        </td>
+
+        <!-- FIX KEY -->
+      <td v-for="engineer in engineers.value"
+        :key="engineer.id - engineer.first_name" :id="'idx_' + engineer.id">
+        <div class="form-check" >
+          <label class="form-check-label" for="flexCheckChecked" >
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
+          @click='changeShiftEngineer("test")' :checked='checkShiftEngineer(engineer.id, shift.shiftEngineers)'>
+          </label>
+        </div>
+      </td>
     </tr>
   </tbody>
 </table>
