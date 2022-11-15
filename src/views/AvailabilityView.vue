@@ -76,15 +76,50 @@ const selectService = (e) => {
   });
 };
 
-const changeShiftEngineer = (sas) => {
-  console.log(sas);
-};
-
 const checkShiftEngineer = (engineerId, shiftEngineers) => shiftEngineers.find((es) => es.engineerId === parseInt(engineerId, 10));
+
+const changeShiftEngineer = (e, shiftId, engineerId) => {
+  console.log(shiftId);
+  console.log(engineerId);
+  if (e.target.checked) {
+    // createShiftEngineer()
+    axios({
+      url: 'http://localhost:3001/graphql',
+      method: 'post',
+      data: {
+        query: `
+          mutation CreateShiftEngineer($input: CreateShiftEngineerInput!){
+              CreateShiftEngineer(input: $input) {
+                shiftEngineer {
+                      id
+                      shiftId
+                      engineerId
+                  }
+
+              }
+          }
+    `,
+        variables: {
+          input: {
+            shiftEngineer: {
+              shiftId,
+              engineerId,
+            },
+          },
+        },
+      },
+    }).then((result) => {
+      debugger;
+    });
+  } else {
+  // destroyShiftEngineer()
+  }
+};
 </script>
 
 <template>
-<!-- Dropdown -->
+
+<!-- Service Dropdown -->
 <div class="btn-group">
   <button type="button" class="btn btn-success dropdown-toggle"
   data-bs-toggle="dropdown" aria-expanded="false">
@@ -102,7 +137,7 @@ const checkShiftEngineer = (engineerId, shiftEngineers) => shiftEngineers.find((
 {{currentService}}
 
 <!-- Tables -->
-<table v-for="date in datesShifts.value" :key='date.dates'
+<table v-for="(date, index) in datesShifts.value" :key='date.dates'
   class="table table-striped table-bordered table-hover">
   <thead>
     <tr>
@@ -119,14 +154,12 @@ const checkShiftEngineer = (engineerId, shiftEngineers) => shiftEngineers.find((
       <td scope="row">
         {{moment(shift.startTime).format('HH:mm')}} - {{ moment(shift.endTime).format('HH:mm')}}
         </td>
-
-        <!-- FIX KEY -->
       <td v-for="engineer in engineers.value"
-        :key="engineer.id - engineer.first_name" :id="'idx_' + engineer.id">
+        :key="'idx_' + engineer.id + '_' + index" :id="'idx_' + shift.id + '_' + index">
         <div class="form-check" >
           <label class="form-check-label" for="flexCheckChecked" >
           <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
-          @click='changeShiftEngineer("test")' :checked='checkShiftEngineer(engineer.id, shift.shiftEngineers)'>
+          @click='e => changeShiftEngineer(e, shift.id, engineer.id)' :checked='checkShiftEngineer(engineer.id, shift.shiftEngineers)'>
           </label>
         </div>
       </td>
