@@ -78,9 +78,10 @@ const selectService = (e) => {
 
 const checkShiftEngineer = (engineerId, shiftEngineers) => shiftEngineers.find((es) => es.engineerId === parseInt(engineerId, 10));
 
-const changeShiftEngineer = (e, shiftId, engineerId) => {
+const changeShiftEngineer = (e, shiftId, engineerId, shiftEngineer) => {
   console.log(shiftId);
   console.log(engineerId);
+  console.log(shiftEngineer);
   if (e.target.checked) {
     // createShiftEngineer()
     axios({
@@ -109,10 +110,34 @@ const changeShiftEngineer = (e, shiftId, engineerId) => {
         },
       },
     }).then((result) => {
-      debugger;
+
     });
   } else {
   // destroyShiftEngineer()
+    axios({
+      url: 'http://localhost:3001/graphql',
+      method: 'post',
+      data: {
+        query: `
+          mutation DestroyShiftEngineer($input: DestroyShiftEngineerInput!){
+              DestroyShiftEngineer(input: $input) {
+                shiftEngineer {
+                      id
+                      shiftId
+                      engineerId
+                  }
+              }
+}
+    `,
+        variables: {
+          input: {
+            id: shiftEngineer.id,
+          },
+        },
+      },
+    }).then((result) => {
+
+    });
   }
 };
 </script>
@@ -159,7 +184,9 @@ const changeShiftEngineer = (e, shiftId, engineerId) => {
         <div class="form-check" >
           <label class="form-check-label" for="flexCheckChecked" >
           <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
-          @click='e => changeShiftEngineer(e, shift.id, engineer.id)' :checked='checkShiftEngineer(engineer.id, shift.shiftEngineers)'>
+          @click='e =>
+          changeShiftEngineer(e, shift.id, engineer.id, checkShiftEngineer(engineer.id, shift.shiftEngineers))'
+          :checked='checkShiftEngineer(engineer.id, shift.shiftEngineers)'>
           </label>
         </div>
       </td>
