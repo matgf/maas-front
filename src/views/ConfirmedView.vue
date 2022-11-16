@@ -46,6 +46,7 @@ const selectService = (e) => {
                     date
                     serviceId
                     startTime
+                    engineerId
                     endTime
                   shiftEngineers {
                         id
@@ -71,25 +72,12 @@ const selectService = (e) => {
     datesShifts.value = result.data.data.service.orderedShifts;
     engineers.value = result.data.data.service.engineers;
     console.log(result.data.data.service.orderedShifts);
-    console.log(result.data.data.service.engineers);
   });
 };
-
-const checkShiftEngineer = (shiftEngineers) => {
-  let engineerIds = [];
-  const engineerNames = [];
-  if (shiftEngineers.length > 0) {
-    engineerIds = shiftEngineers.map((a) => a.engineerId);
-    engineerIds.forEach((id) => {
-      const engineer = engineers.value.find(((e) => parseInt(e.id, 10) === id));
-      if (engineer) {
-        engineerNames.push(engineer);
-      }
-    });
-  }
-  return engineerNames;
+const checkShiftEngineer = (engineerId, engineersService) => {
+  const engineerName = engineersService.find((es) => es.id === engineerId);
+  return `${engineerName.firstName} ${engineerName.lastName}.`;
 };
-
 </script>
 
 <template>
@@ -128,8 +116,7 @@ const checkShiftEngineer = (shiftEngineers) => {
       </td>
 
       <td>
-        <div v-if="shift.assigned"> <p v-for="e in checkShiftEngineer(shift.shiftEngineers)"
-          :key="e.id * shift.id"> {{e.firstName}} {{e.lastName}}</p></div>
+        <div v-if="shift.assigned"> {{checkShiftEngineer(shift.engineerId, engineers.value)}}</div>
         <font-awesome-icon v-else :icon="['fas', 'triangle-exclamation']" />
       </td>
     </tr>
