@@ -8,7 +8,7 @@ Frontend application for Monitoring as a Service API.
 
 - The requests were made using axios and graphql.
 
-- I create a button called Reset Shifts to re-assign the shifts of the engineers. The first time you set up the project you should see the confirmed shifts view with nothing assigned.
+- I create a button called Reset Shifts to re-assign the shifts of the engineers. The first time you set up the project you should see the confirmed shifts view with nothing assigned. In order to see the changes made based on the availability you have to click that button.
 
 - Unfortunately, Due to the time, I couldn't make any tests.
 
