@@ -7,6 +7,7 @@ import moment from 'moment';
 const services = reactive({});
 const currentService = ref(0);
 const datesShifts = reactive({});
+const currentServiceName = ref('');
 const engineers = reactive({});
 
 axios({
@@ -72,6 +73,7 @@ const selectService = (e) => {
   }).then((result) => {
     datesShifts.value = result.data.data.service.orderedShifts;
     engineers.value = result.data.data.service.engineers;
+    currentServiceName.value = result.data.data.service.name;
     console.log(result.data.data.service.orderedShifts);
   });
 };
@@ -144,6 +146,10 @@ const changeShiftEngineer = (e, shiftId, engineerId, shiftEngineer) => {
 
 <template>
 
+<h1> Availability Shifts</h1>
+
+{{currentServiceName}}
+
 <!-- Service Dropdown -->
 <div class="btn-group">
   <button type="button" class="btn btn-success dropdown-toggle"
@@ -159,7 +165,6 @@ const changeShiftEngineer = (e, shiftId, engineerId, shiftEngineer) => {
     </li>
   </ul>
 </div>
-{{currentService}}
 
 <!-- Tables -->
 <table v-for="(date, index) in datesShifts.value" :key='date.dates'
@@ -175,7 +180,7 @@ const changeShiftEngineer = (e, shiftId, engineerId, shiftEngineer) => {
     </tr>
   </thead>
   <tbody>
-    <tr v-for="shift in date.shifts" :key='shift.id'>
+    <tr v-for="shift in date.shifts.sort((a, b) => a.id - b.id)" :key='shift.id'>
       <td scope="row">
         {{moment(shift.startTime).format('HH:mm')}} - {{ moment(shift.endTime).format('HH:mm')}}
         </td>
