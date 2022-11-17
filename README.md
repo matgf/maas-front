@@ -54,4 +54,4 @@ yarn lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 # API
-For the backend project see the this [repository](https://github.com/matgf/maas-front)
+For the backend project see the this [repository](https://github.com/matgf/maas-back)
